@@ -7,6 +7,7 @@ import {
   Palette,
   Info,
   Image as ImageIcon,
+  Mic,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import i18n from "@/i18n"
@@ -19,6 +20,7 @@ import type { SettingsDraft, DraftSetter } from "./settings-types"
 import { LlmProviderSection } from "./sections/llm-provider-section"
 import { EmbeddingSection } from "./sections/embedding-section"
 import { MultimodalSection } from "./sections/multimodal-section"
+import { VoiceSection } from "./sections/voice-section"
 import { WebSearchSection } from "./sections/web-search-section"
 import { OutputSection } from "./sections/output-section"
 import { InterfaceSection } from "./sections/interface-section"
@@ -28,6 +30,7 @@ type CategoryId =
   | "llm"
   | "embedding"
   | "multimodal"
+  | "voice"
   | "web-search"
   | "output"
   | "interface"
@@ -46,6 +49,7 @@ const CATEGORIES: Category[] = [
   { id: "llm", labelKey: "settings.categories.llm", icon: Bot },
   { id: "embedding", labelKey: "settings.categories.embedding", icon: Binary },
   { id: "multimodal", labelKey: "settings.categories.multimodal", icon: ImageIcon },
+  { id: "voice", labelKey: "settings.categories.voice", icon: Mic },
   { id: "web-search", labelKey: "settings.categories.webSearch", icon: Globe },
   { id: "output", labelKey: "settings.categories.output", icon: Languages },
   { id: "interface", labelKey: "settings.categories.interface", icon: Palette },
@@ -57,6 +61,7 @@ function initialDraft(
   search: ReturnType<typeof useWikiStore.getState>["searchApiConfig"],
   embed: ReturnType<typeof useWikiStore.getState>["embeddingConfig"],
   multimodal: ReturnType<typeof useWikiStore.getState>["multimodalConfig"],
+  voice: ReturnType<typeof useWikiStore.getState>["voiceConfig"],
   outputLanguage: ReturnType<typeof useWikiStore.getState>["outputLanguage"],
   maxHistoryMessages: number,
   uiLanguage: string,
@@ -84,6 +89,10 @@ function initialDraft(
     multimodalCustomEndpoint: multimodal.customEndpoint,
     multimodalApiMode: multimodal.apiMode,
     multimodalConcurrency: multimodal.concurrency,
+    voiceEnabled: voice.enabled,
+    voiceBaseUrl: voice.baseUrl,
+    voiceApiKey: voice.apiKey,
+    voiceSttModel: voice.sttModel,
     searchProvider: search.provider,
     searchApiKey: search.apiKey,
     outputLanguage,
@@ -102,6 +111,8 @@ export function SettingsView() {
   const setEmbeddingConfig = useWikiStore((s) => s.setEmbeddingConfig)
   const multimodalConfig = useWikiStore((s) => s.multimodalConfig)
   const setMultimodalConfig = useWikiStore((s) => s.setMultimodalConfig)
+  const voiceConfig = useWikiStore((s) => s.voiceConfig)
+  const setVoiceConfig = useWikiStore((s) => s.setVoiceConfig)
   const outputLanguage = useWikiStore((s) => s.outputLanguage)
   const setOutputLanguage = useWikiStore((s) => s.setOutputLanguage)
   const maxHistoryMessages = useChatStore((s) => s.maxHistoryMessages)
@@ -124,6 +135,7 @@ export function SettingsView() {
       searchApiConfig,
       embeddingConfig,
       multimodalConfig,
+      voiceConfig,
       outputLanguage,
       maxHistoryMessages,
       i18n.language,
@@ -138,6 +150,7 @@ export function SettingsView() {
         searchApiConfig,
         embeddingConfig,
         multimodalConfig,
+        voiceConfig,
         outputLanguage,
         maxHistoryMessages,
         i18n.language,
@@ -148,6 +161,7 @@ export function SettingsView() {
     searchApiConfig,
     embeddingConfig,
     multimodalConfig,
+    voiceConfig,
     outputLanguage,
     maxHistoryMessages,
   ])
@@ -162,6 +176,7 @@ export function SettingsView() {
       saveSearchApiConfig,
       saveEmbeddingConfig,
       saveMultimodalConfig,
+      saveVoiceConfig,
       saveOutputLanguage,
     } = await import("@/lib/project-store")
 
@@ -209,6 +224,14 @@ export function SettingsView() {
     await saveEmbeddingConfig(newEmbed)
     setMultimodalConfig(newMultimodal)
     await saveMultimodalConfig(newMultimodal)
+    const newVoice = {
+      enabled: draft.voiceEnabled,
+      baseUrl: draft.voiceBaseUrl,
+      apiKey: draft.voiceApiKey,
+      sttModel: draft.voiceSttModel,
+    }
+    setVoiceConfig(newVoice)
+    await saveVoiceConfig(newVoice)
     setOutputLanguage(draft.outputLanguage as typeof outputLanguage)
     await saveOutputLanguage(draft.outputLanguage as typeof outputLanguage)
     setMaxHistoryMessages(draft.maxHistoryMessages)
@@ -225,6 +248,8 @@ export function SettingsView() {
     setLlmConfig,
     setSearchApiConfig,
     setEmbeddingConfig,
+    setMultimodalConfig,
+    setVoiceConfig,
     setOutputLanguage,
     setMaxHistoryMessages,
     outputLanguage,
@@ -241,6 +266,8 @@ export function SettingsView() {
         return <EmbeddingSection draft={draft} setDraft={setDraft} />
       case "multimodal":
         return <MultimodalSection draft={draft} setDraft={setDraft} />
+      case "voice":
+        return <VoiceSection draft={draft} setDraft={setDraft} />
       case "web-search":
         return <WebSearchSection draft={draft} setDraft={setDraft} />
       case "output":

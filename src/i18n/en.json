@@ -109,7 +109,8 @@
       "webSearch": "Web Search",
       "output": "Output",
       "interface": "Interface",
-      "about": "About"
+      "about": "About",
+      "voice": "Voice"
     },
     "sections": {
       "llm": {

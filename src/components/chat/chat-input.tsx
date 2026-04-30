@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from "react"
 import { Send, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { MicButton } from "./mic-button"
 
 interface ChatInputProps {
   onSend: (text: string) => void
@@ -40,8 +41,20 @@ export function ChatInput({ onSend, onStop, isStreaming, placeholder }: ChatInpu
     [handleSend],
   )
 
+  const handleTranscribed = useCallback((text: string) => {
+    setValue((prev) => (prev ? `${prev} ${text}` : text))
+    requestAnimationFrame(() => {
+      const ta = textareaRef.current
+      if (!ta) return
+      ta.style.height = "auto"
+      ta.style.height = `${Math.min(ta.scrollHeight, 120)}px`
+      ta.focus()
+    })
+  }, [])
+
   return (
     <div className="flex items-end gap-2 border-t p-3">
+      <MicButton onTranscribed={handleTranscribed} disabled={isStreaming} />
       <textarea
         ref={textareaRef}
         value={value}

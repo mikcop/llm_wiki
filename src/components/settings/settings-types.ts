@@ -41,6 +41,12 @@ export interface SettingsDraft {
   searchProvider: "tavily" | "none"
   searchApiKey: string
 
+  // Voice / STT (chat input dictation)
+  voiceEnabled: boolean
+  voiceBaseUrl: string
+  voiceApiKey: string
+  voiceSttModel: string
+
   // Output preferences
   outputLanguage: string
   maxHistoryMessages: number

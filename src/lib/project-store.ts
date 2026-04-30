@@ -1,6 +1,6 @@
 import { load } from "@tauri-apps/plugin-store"
 import type { WikiProject } from "@/types/wiki"
-import type { LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, OutputLanguage, ProviderConfigs } from "@/stores/wiki-store"
+import type { LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, VoiceConfig, OutputLanguage, ProviderConfigs } from "@/stores/wiki-store"
 
 const STORE_NAME = "app-state.json"
 const RECENT_PROJECTS_KEY = "recentProjects"
@@ -106,6 +106,18 @@ export async function saveMultimodalConfig(config: MultimodalConfig): Promise<vo
 export async function loadMultimodalConfig(): Promise<MultimodalConfig | null> {
   const store = await getStore()
   return (await store.get<MultimodalConfig>(MULTIMODAL_KEY)) ?? null
+}
+
+const VOICE_KEY = "voiceConfig"
+
+export async function saveVoiceConfig(config: VoiceConfig): Promise<void> {
+  const store = await getStore()
+  await store.set(VOICE_KEY, config)
+}
+
+export async function loadVoiceConfig(): Promise<VoiceConfig | null> {
+  const store = await getStore()
+  return (await store.get<VoiceConfig>(VOICE_KEY)) ?? null
 }
 
 export async function removeFromRecentProjects(

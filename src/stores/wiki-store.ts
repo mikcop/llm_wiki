@@ -89,6 +89,13 @@ interface MultimodalConfig {
   concurrency: number
 }
 
+interface VoiceConfig {
+  enabled: boolean
+  baseUrl: string
+  apiKey: string
+  sttModel: string
+}
+
 /**
  * Output language for LLM-generated content (wiki pages, chat responses, research).
  * "auto" = detect from user input / source document language.
@@ -162,6 +169,7 @@ interface WikiState {
   searchApiConfig: SearchApiConfig
   embeddingConfig: EmbeddingConfig
   multimodalConfig: MultimodalConfig
+  voiceConfig: VoiceConfig
   outputLanguage: OutputLanguage
   dataVersion: number
 
@@ -178,6 +186,7 @@ interface WikiState {
   setSearchApiConfig: (config: SearchApiConfig) => void
   setEmbeddingConfig: (config: EmbeddingConfig) => void
   setMultimodalConfig: (config: MultimodalConfig) => void
+  setVoiceConfig: (config: VoiceConfig) => void
   setOutputLanguage: (lang: OutputLanguage) => void
   bumpDataVersion: () => void
 }
@@ -239,6 +248,13 @@ export const useWikiStore = create<WikiState>((set) => ({
     concurrency: 4,
   },
 
+  voiceConfig: {
+    enabled: false,
+    baseUrl: "",
+    apiKey: "",
+    sttModel: "",
+  },
+
   outputLanguage: "auto",
 
   setLlmConfig: (llmConfig) => set({ llmConfig }),
@@ -247,8 +263,9 @@ export const useWikiStore = create<WikiState>((set) => ({
   setSearchApiConfig: (searchApiConfig) => set({ searchApiConfig }),
   setEmbeddingConfig: (embeddingConfig) => set({ embeddingConfig }),
   setMultimodalConfig: (multimodalConfig) => set({ multimodalConfig }),
+  setVoiceConfig: (voiceConfig) => set({ voiceConfig }),
   setOutputLanguage: (outputLanguage) => set({ outputLanguage }),
   bumpDataVersion: () => set((state) => ({ dataVersion: state.dataVersion + 1 })),
 }))
 
-export type { WikiState, LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, OutputLanguage }
+export type { WikiState, LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, VoiceConfig, OutputLanguage }

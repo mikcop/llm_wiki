@@ -109,7 +109,8 @@
       "webSearch": "网页搜索",
       "output": "输出偏好",
       "interface": "界面",
-      "about": "关于"
+      "about": "关于",
+      "voice": "语音"
     },
     "sections": {
       "llm": {
